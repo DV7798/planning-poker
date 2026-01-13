@@ -99,16 +99,18 @@ export default function RoomPage() {
       ))
     })
 
-    socketInstance.on('votes-revealed', () => {
-      setIsRevealed(true)
-      setHasShownConfetti(false) // Reset confetti flag when votes are revealed
-    })
 
     socketInstance.on('votes-reset', () => {
       setIsRevealed(false)
       setMyVote(null)
       setHasShownConfetti(false) // Reset confetti flag when votes are reset
       setUsers(prev => prev.map(u => ({ ...u, vote: null, hasVoted: false })))
+    })
+    
+    socketInstance.on('votes-revealed', () => {
+      setIsRevealed(true)
+      // Reset confetti flag so it can trigger again if all votes match
+      setHasShownConfetti(false)
     })
 
     socketInstance.on('story-updated', (story: string) => {
@@ -174,7 +176,7 @@ export default function RoomPage() {
         <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-2 sm:p-3 mb-2 sm:mb-3 border-2 border-teal-500/50">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
             <div className="flex-1 min-w-0">
-              <h1 className="text-lg sm:text-2xl font-bold text-teal-200 truncate">🎯 Planning Poker</h1>
+              <h1 className="text-lg sm:text-2xl font-bold text-teal-200 truncate">🎯 Basil Planning Poker</h1>
               <p className="text-xs text-teal-300 mt-0.5 truncate">
                 Room: <span className="font-mono font-semibold text-cyan-300">{roomId}</span>
               </p>
@@ -200,20 +202,6 @@ export default function RoomPage() {
           </div>
         </div>
 
-        {/* Story Input - Compact */}
-        <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-2 sm:p-3 mb-2 sm:mb-3 border-2 border-teal-500/50">
-          <label className="block text-xs sm:text-sm font-medium text-teal-200 mb-1">
-            📋 User Story / Task
-          </label>
-          <textarea
-            value={currentStory}
-            onChange={(e) => handleUpdateStory(e.target.value)}
-            placeholder="Enter the user story or task to estimate..."
-            className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border-2 border-teal-500/50 rounded-lg bg-slate-700/50 text-teal-100 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none resize-none placeholder-teal-400 text-xs sm:text-sm"
-            rows={2}
-          />
-        </div>
-
         {/* Poker Table */}
         <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-2 sm:p-4 mb-2 sm:mb-3 border-2 border-teal-500/50">
           <PokerTable 
@@ -222,6 +210,7 @@ export default function RoomPage() {
             currentUser={username}
             currentStory={currentStory}
             onReveal={handleReveal}
+            onReset={handleReset}
             allVoted={allVoted}
             showConfetti={allVotesSame}
           />

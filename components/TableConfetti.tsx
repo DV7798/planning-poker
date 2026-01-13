@@ -15,85 +15,105 @@ export default function TableConfetti({ trigger, containerId }: TableConfettiPro
 
   useEffect(() => {
     if (trigger && !hasTriggered.current) {
-      hasTriggered.current = true
-      
-      const container = document.getElementById(containerId)
-      if (!container) return
+      // Small delay to ensure container is rendered
+      const timeoutId = setTimeout(() => {
+        hasTriggered.current = true
+        
+        const container = document.getElementById(containerId)
+        if (!container) {
+          console.warn('Confetti container not found:', containerId)
+          hasTriggered.current = false
+          return
+        }
 
-      // Create canvas for confetti
-      const canvas = document.createElement('canvas')
-      canvas.style.position = 'absolute'
-      canvas.style.top = '0'
-      canvas.style.left = '0'
-      canvas.style.width = '100%'
-      canvas.style.height = '100%'
-      canvas.style.pointerEvents = 'none'
-      canvas.style.zIndex = '1000'
-      container.appendChild(canvas)
-      canvasRef.current = canvas
+        // Create canvas for confetti
+        const canvas = document.createElement('canvas')
+        canvas.style.position = 'absolute'
+        canvas.style.top = '0'
+        canvas.style.left = '0'
+        canvas.style.width = '100%'
+        canvas.style.height = '100%'
+        canvas.style.pointerEvents = 'none'
+        canvas.style.zIndex = '1000'
+        container.appendChild(canvas)
+        canvasRef.current = canvas
 
-      const updateCanvasSize = () => {
-        const rect = container.getBoundingClientRect()
-        canvas.width = rect.width
-        canvas.height = rect.height
-      }
-      
-      updateCanvasSize()
-      window.addEventListener('resize', updateCanvasSize)
+        const updateCanvasSize = () => {
+          const rect = container.getBoundingClientRect()
+          canvas.width = rect.width
+          canvas.height = rect.height
+        }
+        
+        updateCanvasSize()
+        window.addEventListener('resize', updateCanvasSize)
 
-      const confettiInstance = confetti.create(canvas, { resize: true })
+        const confettiInstance = confetti.create(canvas, { resize: true })
 
-      const duration = 3000
-      const animationEnd = Date.now() + duration
-      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 }
+        const duration = 3000
+        const animationEnd = Date.now() + duration
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 }
 
-      const randomInRange = (min: number, max: number) => {
-        return Math.random() * (max - min) + min
-      }
+        const randomInRange = (min: number, max: number) => {
+          return Math.random() * (max - min) + min
+        }
 
-      intervalRef.current = setInterval(function() {
-        const timeLeft = animationEnd - Date.now()
+        intervalRef.current = setInterval(function() {
+          const timeLeft = animationEnd - Date.now()
 
-        if (timeLeft <= 0) {
+          if (timeLeft <= 0) {
+            if (intervalRef.current) {
+              clearInterval(intervalRef.current)
+              intervalRef.current = null
+            }
+            return
+          }
+
+          const particleCount = 50 * (timeLeft / duration)
+          
+          // Launch confetti from center of table
+          confettiInstance({
+            ...defaults,
+            particleCount,
+            origin: { x: 0.5, y: 0.5 }
+          })
+          // Also from edges
+          confettiInstance({
+            ...defaults,
+            particleCount: particleCount / 2,
+            origin: { x: randomInRange(0.2, 0.8), y: randomInRange(0.2, 0.8) }
+          })
+        }, 200)
+
+        // Cleanup
+        return () => {
           if (intervalRef.current) {
             clearInterval(intervalRef.current)
             intervalRef.current = null
           }
-          return
+          window.removeEventListener('resize', updateCanvasSize)
+          if (canvas && canvas.parentNode) {
+            canvas.parentNode.removeChild(canvas)
+          }
         }
+      }, 100)
 
-        const particleCount = 50 * (timeLeft / duration)
-        
-        // Launch confetti from center of table
-        confettiInstance({
-          ...defaults,
-          particleCount,
-          origin: { x: 0.5, y: 0.5 }
-        })
-        // Also from edges
-        confettiInstance({
-          ...defaults,
-          particleCount: particleCount / 2,
-          origin: { x: randomInRange(0.2, 0.8), y: randomInRange(0.2, 0.8) }
-        })
-      }, 200)
-
-      // Cleanup
       return () => {
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current)
-          intervalRef.current = null
-        }
-        window.removeEventListener('resize', updateCanvasSize)
-        if (canvas && canvas.parentNode) {
-          canvas.parentNode.removeChild(canvas)
-        }
+        clearTimeout(timeoutId)
       }
     }
     
     // Reset when trigger becomes false
     if (!trigger) {
       hasTriggered.current = false
+      // Clean up any existing canvas
+      if (canvasRef.current && canvasRef.current.parentNode) {
+        canvasRef.current.parentNode.removeChild(canvasRef.current)
+        canvasRef.current = null
+      }
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
     }
   }, [trigger, containerId])
 

@@ -17,13 +17,28 @@ function HomeContent() {
     }
   }, [searchParams])
 
-  const handleCreateRoom = () => {
+  const handleCreateRoom = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+    console.log('Create room clicked, username:', username)
     if (!username.trim()) {
       alert('Please enter your name')
       return
     }
     const newRoomId = Math.random().toString(36).substring(2, 9).toUpperCase()
-    router.push(`/room/${newRoomId}?username=${encodeURIComponent(username)}`)
+    console.log('Navigating to room:', newRoomId)
+    const url = `/room/${newRoomId}?username=${encodeURIComponent(username)}`
+    console.log('URL:', url)
+    
+    // Try router.push first, fallback to window.location if it fails
+    try {
+      router.push(url)
+    } catch (err) {
+      console.error('Router push failed, using window.location:', err)
+      window.location.href = url
+    }
   }
 
   const handleJoinRoom = () => {
@@ -38,7 +53,7 @@ function HomeContent() {
     <div className="min-h-screen bg-gradient-to-br from-teal-900 via-cyan-900 to-blue-900 flex items-center justify-center p-3 sm:p-4">
       <div className="bg-slate-800/90 backdrop-blur-sm rounded-2xl shadow-2xl p-4 sm:p-8 w-full max-w-md border-2 border-teal-500/50">
         <div className="text-center mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-4xl font-bold text-teal-200 mb-2">🎯 Planning Poker</h1>
+          <h1 className="text-2xl sm:text-4xl font-bold text-teal-200 mb-2">🎯 Basil Planning Poker</h1>
           <p className="text-sm sm:text-base text-teal-300">Estimate user stories together in real-time</p>
         </div>
 
@@ -85,14 +100,24 @@ function HomeContent() {
 
           <div className="flex flex-col gap-3 pt-4">
             <button
-              onClick={handleCreateRoom}
-              className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white font-semibold py-3 sm:py-3.5 px-4 text-sm sm:text-base rounded-lg transition-all transform hover:scale-105 shadow-lg touch-manipulation"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                handleCreateRoom(e)
+              }}
+              type="button"
+              className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white font-semibold py-3 sm:py-3.5 px-4 text-sm sm:text-base rounded-lg transition-all transform hover:scale-105 shadow-lg touch-manipulation cursor-pointer active:scale-95"
             >
               Create New Room
             </button>
             {roomId && (
               <button
-                onClick={handleJoinRoom}
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  handleJoinRoom()
+                }}
+                type="button"
                 className="w-full bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-semibold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg"
               >
                 Join Room
@@ -117,7 +142,7 @@ export default function Home() {
       <div className="min-h-screen bg-gradient-to-br from-teal-900 via-cyan-900 to-blue-900 flex items-center justify-center p-4">
         <div className="bg-slate-800/90 backdrop-blur-sm rounded-2xl shadow-2xl p-8 w-full max-w-md border-2 border-teal-500/50">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-teal-200 mb-2">🎯 Planning Poker</h1>
+            <h1 className="text-4xl font-bold text-teal-200 mb-2">🎯 Basil Planning Poker</h1>
             <p className="text-teal-300">Loading...</p>
           </div>
         </div>

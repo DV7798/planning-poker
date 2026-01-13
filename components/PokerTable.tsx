@@ -13,11 +13,12 @@ interface PokerTableProps {
   currentUser: string
   currentStory: string
   onReveal?: () => void
+  onReset?: () => void
   allVoted?: boolean
   showConfetti?: boolean
 }
 
-export default function PokerTable({ users, isRevealed, currentUser, currentStory, onReveal, allVoted, showConfetti }: PokerTableProps) {
+export default function PokerTable({ users, isRevealed, currentUser, currentStory, onReveal, onReset, allVoted, showConfetti }: PokerTableProps) {
   // Calculate positions for users around the table (circular)
   // Using smaller radius values that work better on mobile
   const getPosition = (index: number, total: number) => {
@@ -41,16 +42,6 @@ export default function PokerTable({ users, isRevealed, currentUser, currentStor
 
   return (
     <div className="relative w-full mx-auto" style={{ paddingBottom: 'clamp(30%, 50%, 40%)' }}>
-      {/* Confetti Overlay */}
-      {showConfetti && (
-        <>
-          <div className="absolute inset-0 z-50 pointer-events-none overflow-hidden rounded-[50%]" id="poker-table-confetti-container">
-            {/* Confetti canvas will be rendered here */}
-          </div>
-          <TableConfetti trigger={showConfetti} containerId="poker-table-confetti-container" />
-        </>
-      )}
-      
       {/* Poker Table Surface - Horizontal/Oval shape */}
       <div className="absolute inset-0 rounded-[50%] bg-gradient-to-br from-emerald-800 via-emerald-700 to-emerald-900 shadow-2xl border-4 sm:border-8 border-slate-800">
         {/* Table felt texture */}
@@ -64,7 +55,14 @@ export default function PokerTable({ users, isRevealed, currentUser, currentStor
         {/* Table center area */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4/5 sm:w-2/5 h-4/5 sm:h-2/5 rounded-full bg-emerald-800 border-2 sm:border-4 border-slate-700 flex items-center justify-center">
           <div className="text-center p-1.5 sm:p-4">
-            {allVoted && !isRevealed && onReveal ? (
+            {isRevealed && onReset ? (
+              <button
+                onClick={onReset}
+                className="bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-bold py-1.5 px-2 sm:py-3 sm:px-6 rounded-lg shadow-xl transform hover:scale-105 transition-all text-[10px] sm:text-sm touch-manipulation"
+              >
+                🔄 Reset
+              </button>
+            ) : allVoted && !isRevealed && onReveal ? (
               <button
                 onClick={onReveal}
                 className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white font-bold py-1.5 px-2 sm:py-3 sm:px-6 rounded-lg shadow-xl transform hover:scale-105 transition-all text-[10px] sm:text-sm touch-manipulation"
@@ -75,11 +73,7 @@ export default function PokerTable({ users, isRevealed, currentUser, currentStor
               <div className="text-white text-[9px] sm:text-xs font-semibold max-w-[90%] mx-auto px-0.5 sm:px-1 break-words line-clamp-2 sm:line-clamp-none">
                 {currentStory}
               </div>
-            ) : (
-              <div className="text-emerald-200 text-[9px] sm:text-xs italic">
-                Enter story above
-              </div>
-            )}
+            ) : null}
             {!isRevealed && users.length > 0 && !allVoted && (
               <div className="mt-0.5 sm:mt-2 text-emerald-200 text-[9px] sm:text-xs">
                 {users.filter(u => u.hasVoted).length} / {users.length} voted
@@ -161,6 +155,20 @@ export default function PokerTable({ users, isRevealed, currentUser, currentStor
           </div>
         )}
       </div>
+      
+      {/* Confetti Overlay - Above table */}
+      {showConfetti && (
+        <>
+          <div 
+            className="absolute inset-0 pointer-events-none overflow-hidden rounded-[50%]" 
+            style={{ zIndex: 100, position: 'absolute' }}
+            id="poker-table-confetti-container"
+          >
+            {/* Confetti canvas will be rendered here */}
+          </div>
+          <TableConfetti key={showConfetti ? 'confetti-triggered' : 'confetti-idle'} trigger={showConfetti} containerId="poker-table-confetti-container" />
+        </>
+      )}
     </div>
   )
 }
