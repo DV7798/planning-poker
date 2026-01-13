@@ -1,4 +1,7 @@
+
 # Planning Poker Web App
+
+Planning Poker is a gamified, consensus-based agile estimation technique where team members use numbered cards (from the Fibonacci sequence, like 1, 2, 3, 5, 8) to silently vote on the relative effort, complexity, and size of user stories or tasks
 
 A real-time Planning Poker estimation tool built with Next.js, TypeScript, and Socket.io.
 
@@ -117,6 +120,3 @@ npm start
 - ✅ **Fly.io** (Good free tier)
 - ⚠️ **Vercel/Netlify** (Requires separate Socket.io server - see DEPLOYMENT.md)
 
-## License
-
-MIT
