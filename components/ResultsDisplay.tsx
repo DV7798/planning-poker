@@ -91,11 +91,11 @@ export default function ResultsDisplay({ users }: ResultsDisplayProps) {
             </div>
           </div>
 
-          {stats.mostCommon && parseInt(stats.mostCommon[1]) > 1 && (
+          {stats.mostCommon && stats.mostCommon[1] > 1 && (
             <div className="mt-4 p-4 bg-yellow-600/30 border-2 border-yellow-500/50 rounded-lg backdrop-blur-sm">
               <p className="text-sm text-yellow-200">
                 <span className="font-semibold">Most common vote:</span> {stats.mostCommon[0]} 
-                {' '}({stats.mostCommon[1]} {parseInt(stats.mostCommon[1]) === 1 ? 'vote' : 'votes'})
+                {' '}({stats.mostCommon[1]} {stats.mostCommon[1] === 1 ? 'vote' : 'votes'})
               </p>
             </div>
           )}
