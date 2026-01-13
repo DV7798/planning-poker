@@ -168,52 +168,54 @@ export default function RoomPage() {
   }, [allVotesSame, hasShownConfetti])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-900 via-cyan-900 to-blue-900 p-3">
+    <div className="min-h-screen bg-gradient-to-br from-teal-900 via-cyan-900 to-blue-900 p-2 sm:p-3">
       <div className="max-w-7xl mx-auto">
         {/* Header - Compact */}
-        <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-3 mb-3 border-2 border-teal-500/50">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold text-teal-200">🎯 Planning Poker</h1>
-              <p className="text-xs text-teal-300 mt-0.5">
+        <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-2 sm:p-3 mb-2 sm:mb-3 border-2 border-teal-500/50">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-lg sm:text-2xl font-bold text-teal-200 truncate">🎯 Planning Poker</h1>
+              <p className="text-xs text-teal-300 mt-0.5 truncate">
                 Room: <span className="font-mono font-semibold text-cyan-300">{roomId}</span>
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
               <button
                 onClick={handleShareGame}
-                className="relative px-3 py-1.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white text-xs font-semibold rounded-lg transition-all transform hover:scale-105 shadow-md flex items-center gap-1.5"
+                className="relative px-2 sm:px-3 py-1.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white text-xs font-semibold rounded-lg transition-all transform hover:scale-105 shadow-md flex items-center gap-1 touch-manipulation"
               >
                 <span>🔗</span>
-                <span>Share Game</span>
+                <span className="hidden sm:inline">Share Game</span>
                 {showCopied && (
-                  <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                  <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50">
                     Link Copied!
                   </span>
                 )}
               </button>
-              <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-400 animate-pulse' : 'bg-red-500'}`}></div>
-              <span className="text-xs text-teal-200 font-semibold">{username}</span>
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-400 animate-pulse' : 'bg-red-500'}`}></div>
+                <span className="text-xs text-teal-200 font-semibold truncate max-w-[80px] sm:max-w-none">{username}</span>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Story Input - Compact */}
-        <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-3 mb-3 border-2 border-teal-500/50">
-          <label className="block text-sm font-medium text-teal-200 mb-1">
+        <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-2 sm:p-3 mb-2 sm:mb-3 border-2 border-teal-500/50">
+          <label className="block text-xs sm:text-sm font-medium text-teal-200 mb-1">
             📋 User Story / Task
           </label>
           <textarea
             value={currentStory}
             onChange={(e) => handleUpdateStory(e.target.value)}
             placeholder="Enter the user story or task to estimate..."
-            className="w-full px-3 py-2 border-2 border-teal-500/50 rounded-lg bg-slate-700/50 text-teal-100 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none resize-none placeholder-teal-400 text-sm"
+            className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border-2 border-teal-500/50 rounded-lg bg-slate-700/50 text-teal-100 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none resize-none placeholder-teal-400 text-xs sm:text-sm"
             rows={2}
           />
         </div>
 
         {/* Poker Table */}
-        <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-4 mb-3 border-2 border-teal-500/50">
+        <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-2 sm:p-4 mb-2 sm:mb-3 border-2 border-teal-500/50">
           <PokerTable 
             users={users} 
             isRevealed={isRevealed} 
@@ -227,11 +229,11 @@ export default function RoomPage() {
 
         {/* Celebration Message - Compact */}
         {allVotesSame && (
-          <div className="mb-3 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-2 border-yellow-400/50 rounded-lg p-3 text-center animate-pulse">
-            <div className="text-2xl mb-1">🎉</div>
-            <h3 className="text-lg font-bold text-yellow-300 mb-1">Perfect Consensus!</h3>
-            <p className="text-yellow-200 text-sm">
-              Everyone voted <span className="font-bold text-xl text-yellow-100">
+          <div className="mb-2 sm:mb-3 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-2 border-yellow-400/50 rounded-lg p-2 sm:p-3 text-center animate-pulse">
+            <div className="text-xl sm:text-2xl mb-1">🎉</div>
+            <h3 className="text-base sm:text-lg font-bold text-yellow-300 mb-1">Perfect Consensus!</h3>
+            <p className="text-yellow-200 text-xs sm:text-sm">
+              Everyone voted <span className="font-bold text-lg sm:text-xl text-yellow-100">
                 {users.find(u => u.vote !== null)?.vote}
               </span>
             </p>
@@ -246,11 +248,11 @@ export default function RoomPage() {
         )}
 
         {/* Voting Cards at Bottom - Compact */}
-        <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-4 mb-3 border-2 border-teal-500/50">
-          <h2 className="text-lg font-semibold text-teal-200 mb-3 text-center">
+        <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-2 sm:p-4 mb-2 sm:mb-3 border-2 border-teal-500/50">
+          <h2 className="text-base sm:text-lg font-semibold text-teal-200 mb-2 sm:mb-3 text-center">
             {isRevealed ? '🎴 Votes Revealed' : '🎴 Select Your Estimate'}
           </h2>
-          <div className="flex flex-wrap justify-center gap-2 max-w-4xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 max-w-4xl mx-auto overflow-x-auto pb-2">
             {fibonacciSequence.map((value, index) => (
               <PokerCard
                 key={index}

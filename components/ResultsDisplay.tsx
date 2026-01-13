@@ -44,47 +44,47 @@ export default function ResultsDisplay({ users }: ResultsDisplayProps) {
       <h2 className="text-xl font-semibold text-teal-200 mb-4">📊 Voting Results</h2>
       
       {stats ? (
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-blue-600/30 border-2 border-blue-500/50 p-4 rounded-lg backdrop-blur-sm">
-              <div className="text-sm text-teal-200">Minimum</div>
-              <div className="text-2xl font-bold text-blue-300">{stats.min}</div>
+        <div className="space-y-3 sm:space-y-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
+            <div className="bg-blue-600/30 border-2 border-blue-500/50 p-2 sm:p-4 rounded-lg backdrop-blur-sm">
+              <div className="text-xs sm:text-sm text-teal-200">Minimum</div>
+              <div className="text-xl sm:text-2xl font-bold text-blue-300">{stats.min}</div>
             </div>
-            <div className="bg-green-600/30 border-2 border-green-500/50 p-4 rounded-lg backdrop-blur-sm">
-              <div className="text-sm text-teal-200">Maximum</div>
-              <div className="text-2xl font-bold text-green-300">{stats.max}</div>
+            <div className="bg-green-600/30 border-2 border-green-500/50 p-2 sm:p-4 rounded-lg backdrop-blur-sm">
+              <div className="text-xs sm:text-sm text-teal-200">Maximum</div>
+              <div className="text-xl sm:text-2xl font-bold text-green-300">{stats.max}</div>
             </div>
-            <div className="bg-cyan-600/30 border-2 border-cyan-500/50 p-4 rounded-lg backdrop-blur-sm">
-              <div className="text-sm text-teal-200">Average</div>
-              <div className="text-2xl font-bold text-cyan-300">{stats.avg.toFixed(1)}</div>
+            <div className="bg-cyan-600/30 border-2 border-cyan-500/50 p-2 sm:p-4 rounded-lg backdrop-blur-sm">
+              <div className="text-xs sm:text-sm text-teal-200">Average</div>
+              <div className="text-xl sm:text-2xl font-bold text-cyan-300">{stats.avg.toFixed(1)}</div>
             </div>
-            <div className="bg-orange-600/30 border-2 border-orange-500/50 p-4 rounded-lg backdrop-blur-sm">
-              <div className="text-sm text-teal-200">Median</div>
-              <div className="text-2xl font-bold text-orange-300">{stats.median.toFixed(1)}</div>
+            <div className="bg-orange-600/30 border-2 border-orange-500/50 p-2 sm:p-4 rounded-lg backdrop-blur-sm">
+              <div className="text-xs sm:text-sm text-teal-200">Median</div>
+              <div className="text-xl sm:text-2xl font-bold text-orange-300">{stats.median.toFixed(1)}</div>
             </div>
           </div>
 
-          <div className="mt-6">
-            <h3 className="text-sm font-semibold text-teal-200 mb-3">Vote Distribution</h3>
-            <div className="space-y-2">
+          <div className="mt-4 sm:mt-6">
+            <h3 className="text-xs sm:text-sm font-semibold text-teal-200 mb-2 sm:mb-3">Vote Distribution</h3>
+            <div className="space-y-1.5 sm:space-y-2">
               {Object.entries(stats.counts)
                 .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
                 .map(([value, count]) => {
                   const percentage = (count / votes.length) * 100
                   return (
-                    <div key={value} className="flex items-center gap-3">
-                      <div className="w-12 text-sm font-semibold text-teal-200">{value}</div>
-                      <div className="flex-1 bg-slate-700/50 rounded-full h-6 overflow-hidden border border-teal-500/30">
+                    <div key={value} className="flex items-center gap-2 sm:gap-3">
+                      <div className="w-10 sm:w-12 text-xs sm:text-sm font-semibold text-teal-200">{value}</div>
+                      <div className="flex-1 bg-slate-700/50 rounded-full h-5 sm:h-6 overflow-hidden border border-teal-500/30">
                         <div
-                          className="bg-gradient-to-r from-teal-500 to-cyan-600 h-full rounded-full flex items-center justify-end pr-2"
+                          className="bg-gradient-to-r from-teal-500 to-cyan-600 h-full rounded-full flex items-center justify-end pr-1 sm:pr-2"
                           style={{ width: `${percentage}%` }}
                         >
                           {percentage > 10 && (
-                            <span className="text-xs text-white font-semibold">{count}</span>
+                            <span className="text-[10px] sm:text-xs text-white font-semibold">{count}</span>
                           )}
                         </div>
                       </div>
-                      <div className="w-8 text-sm text-teal-200 text-right">{count}</div>
+                      <div className="w-6 sm:w-8 text-xs sm:text-sm text-teal-200 text-right">{count}</div>
                     </div>
                   )
                 })}
@@ -92,8 +92,8 @@ export default function ResultsDisplay({ users }: ResultsDisplayProps) {
           </div>
 
           {stats.mostCommon && stats.mostCommon[1] > 1 && (
-            <div className="mt-4 p-4 bg-yellow-600/30 border-2 border-yellow-500/50 rounded-lg backdrop-blur-sm">
-              <p className="text-sm text-yellow-200">
+            <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-yellow-600/30 border-2 border-yellow-500/50 rounded-lg backdrop-blur-sm">
+              <p className="text-xs sm:text-sm text-yellow-200">
                 <span className="font-semibold">Most common vote:</span> {stats.mostCommon[0]} 
                 {' '}({stats.mostCommon[1]} {stats.mostCommon[1] === 1 ? 'vote' : 'votes'})
               </p>
