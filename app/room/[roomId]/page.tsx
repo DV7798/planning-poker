@@ -24,7 +24,7 @@ interface RoomState {
 export default function RoomPage() {
   const params = useParams()
   const searchParams = useSearchParams()
-  const roomId = params.roomId as string
+  const roomId = (params.roomId as string)?.toUpperCase() || ''
   const username = searchParams.get('username') || 'Anonymous'
   
   const [socket, setSocket] = useState<Socket | null>(null)
@@ -34,7 +34,27 @@ export default function RoomPage() {
   const [myVote, setMyVote] = useState<number | null>(null)
   const [isConnected, setIsConnected] = useState(false)
   const [hasShownConfetti, setHasShownConfetti] = useState(false)
+  const [showCopied, setShowCopied] = useState(false)
   const socketRef = useRef<Socket | null>(null)
+
+  const handleShareGame = async () => {
+    const shareUrl = `${window.location.origin}/?room=${roomId}`
+    try {
+      await navigator.clipboard.writeText(shareUrl)
+      setShowCopied(true)
+      setTimeout(() => setShowCopied(false), 2000)
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea')
+      textArea.value = shareUrl
+      document.body.appendChild(textArea)
+      textArea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textArea)
+      setShowCopied(true)
+      setTimeout(() => setShowCopied(false), 2000)
+    }
+  }
 
   useEffect(() => {
     // Initialize socket connection
@@ -148,40 +168,52 @@ export default function RoomPage() {
   }, [allVotesSame, hasShownConfetti])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 p-3">
+    <div className="min-h-screen bg-gradient-to-br from-teal-900 via-cyan-900 to-blue-900 p-3">
       <div className="max-w-7xl mx-auto">
         {/* Header - Compact */}
-        <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-3 mb-3 border-2 border-indigo-500/50">
+        <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-3 mb-3 border-2 border-teal-500/50">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold text-indigo-200">🎯 Planning Poker</h1>
-              <p className="text-xs text-indigo-300 mt-0.5">
-                Room: <span className="font-mono font-semibold text-purple-300">{roomId}</span>
+              <h1 className="text-2xl font-bold text-teal-200">🎯 Planning Poker</h1>
+              <p className="text-xs text-teal-300 mt-0.5">
+                Room: <span className="font-mono font-semibold text-cyan-300">{roomId}</span>
               </p>
             </div>
             <div className="flex items-center gap-3">
+              <button
+                onClick={handleShareGame}
+                className="relative px-3 py-1.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white text-xs font-semibold rounded-lg transition-all transform hover:scale-105 shadow-md flex items-center gap-1.5"
+              >
+                <span>🔗</span>
+                <span>Share Game</span>
+                {showCopied && (
+                  <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                    Link Copied!
+                  </span>
+                )}
+              </button>
               <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-400 animate-pulse' : 'bg-red-500'}`}></div>
-              <span className="text-xs text-indigo-200 font-semibold">{username}</span>
+              <span className="text-xs text-teal-200 font-semibold">{username}</span>
             </div>
           </div>
         </div>
 
         {/* Story Input - Compact */}
-        <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-3 mb-3 border-2 border-indigo-500/50">
-          <label className="block text-sm font-medium text-indigo-200 mb-1">
+        <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-3 mb-3 border-2 border-teal-500/50">
+          <label className="block text-sm font-medium text-teal-200 mb-1">
             📋 User Story / Task
           </label>
           <textarea
             value={currentStory}
             onChange={(e) => handleUpdateStory(e.target.value)}
             placeholder="Enter the user story or task to estimate..."
-            className="w-full px-3 py-2 border-2 border-indigo-500/50 rounded-lg bg-slate-700/50 text-indigo-100 focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none resize-none placeholder-indigo-400 text-sm"
+            className="w-full px-3 py-2 border-2 border-teal-500/50 rounded-lg bg-slate-700/50 text-teal-100 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none resize-none placeholder-teal-400 text-sm"
             rows={2}
           />
         </div>
 
         {/* Poker Table */}
-        <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-4 mb-3 border-2 border-indigo-500/50">
+        <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-4 mb-3 border-2 border-teal-500/50">
           <PokerTable 
             users={users} 
             isRevealed={isRevealed} 
@@ -214,8 +246,8 @@ export default function RoomPage() {
         )}
 
         {/* Voting Cards at Bottom - Compact */}
-        <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-4 mb-3 border-2 border-indigo-500/50">
-          <h2 className="text-lg font-semibold text-indigo-200 mb-3 text-center">
+        <div className="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-4 mb-3 border-2 border-teal-500/50">
+          <h2 className="text-lg font-semibold text-teal-200 mb-3 text-center">
             {isRevealed ? '🎴 Votes Revealed' : '🎴 Select Your Estimate'}
           </h2>
           <div className="flex flex-wrap justify-center gap-2 max-w-4xl mx-auto">
@@ -231,15 +263,13 @@ export default function RoomPage() {
           </div>
         </div>
 
-        {/* Controls - Only show reset button after reveal */}
-        {isRevealed && (
-          <RoomControls
-            onReveal={handleReveal}
-            onReset={handleReset}
-            isRevealed={isRevealed}
-            hasVotes={users.some(u => u.hasVoted)}
-          />
-        )}
+        {/* Controls */}
+        <RoomControls
+          onReveal={handleReveal}
+          onReset={handleReset}
+          isRevealed={isRevealed}
+          hasVotes={users.some(u => u.hasVoted)}
+        />
       </div>
     </div>
   )

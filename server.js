@@ -36,17 +36,19 @@ app.prepare().then(() => {
     console.log('Client connected:', socket.id)
 
     socket.on('join-room', ({ roomId, username }) => {
-      socket.join(roomId)
+      // Normalize room ID to uppercase
+      const normalizedRoomId = roomId.toUpperCase()
+      socket.join(normalizedRoomId)
       
-      if (!rooms.has(roomId)) {
-        rooms.set(roomId, {
+      if (!rooms.has(normalizedRoomId)) {
+        rooms.set(normalizedRoomId, {
           users: [],
           isRevealed: false,
           currentStory: '',
         })
       }
 
-      const room = rooms.get(roomId)
+      const room = rooms.get(normalizedRoomId)
       const existingUser = room.users.find(u => u.id === socket.id)
       
       if (!existingUser) {
@@ -71,13 +73,14 @@ app.prepare().then(() => {
       })
 
       // Broadcast updated user list to all in room
-      io.to(roomId).emit('room-state', room)
+      io.to(normalizedRoomId).emit('room-state', room)
 
-      console.log(`${username} joined room ${roomId}`)
+      console.log(`${username} joined room ${normalizedRoomId}`)
     })
 
     socket.on('vote', ({ roomId, value }) => {
-      const room = rooms.get(roomId)
+      const normalizedRoomId = roomId.toUpperCase()
+      const room = rooms.get(normalizedRoomId)
       if (!room) return
 
       const user = room.users.find(u => u.id === socket.id)
@@ -87,7 +90,7 @@ app.prepare().then(() => {
       }
 
       // Broadcast vote status to room (but don't reveal value if not revealed)
-      socket.to(roomId).emit('vote-received', {
+      socket.to(normalizedRoomId).emit('vote-received', {
         userId: socket.id,
         vote: room.isRevealed ? value : null,
         hasVoted: true,
@@ -102,20 +105,22 @@ app.prepare().then(() => {
           // hasVoted should be visible to everyone
         })),
       }
-      io.to(roomId).emit('room-state', stateToSend)
+      io.to(normalizedRoomId).emit('room-state', stateToSend)
     })
 
     socket.on('reveal-votes', ({ roomId }) => {
-      const room = rooms.get(roomId)
+      const normalizedRoomId = roomId.toUpperCase()
+      const room = rooms.get(normalizedRoomId)
       if (!room) return
 
       room.isRevealed = true
-      io.to(roomId).emit('votes-revealed')
-      io.to(roomId).emit('room-state', room)
+      io.to(normalizedRoomId).emit('votes-revealed')
+      io.to(normalizedRoomId).emit('room-state', room)
     })
 
     socket.on('reset-votes', ({ roomId }) => {
-      const room = rooms.get(roomId)
+      const normalizedRoomId = roomId.toUpperCase()
+      const room = rooms.get(normalizedRoomId)
       if (!room) return
 
       room.isRevealed = false
@@ -124,29 +129,30 @@ app.prepare().then(() => {
         user.hasVoted = false
       })
 
-      io.to(roomId).emit('votes-reset')
-      io.to(roomId).emit('room-state', room)
+      io.to(normalizedRoomId).emit('votes-reset')
+      io.to(normalizedRoomId).emit('room-state', room)
     })
 
     socket.on('update-story', ({ roomId, story }) => {
-      const room = rooms.get(roomId)
+      const normalizedRoomId = roomId.toUpperCase()
+      const room = rooms.get(normalizedRoomId)
       if (!room) return
 
       room.currentStory = story
-      io.to(roomId).emit('story-updated', story)
-      io.to(roomId).emit('room-state', room)
+      io.to(normalizedRoomId).emit('story-updated', story)
+      io.to(normalizedRoomId).emit('room-state', room)
     })
 
     socket.on('disconnect', () => {
       console.log('Client disconnected:', socket.id)
 
       // Remove user from all rooms
-      rooms.forEach((room, roomId) => {
+      rooms.forEach((room, normalizedRoomId) => {
         const userIndex = room.users.findIndex(u => u.id === socket.id)
         if (userIndex !== -1) {
           room.users.splice(userIndex, 1)
-          socket.to(roomId).emit('user-left', socket.id)
-          io.to(roomId).emit('room-state', room)
+          socket.to(normalizedRoomId).emit('user-left', socket.id)
+          io.to(normalizedRoomId).emit('room-state', room)
         }
       })
     })

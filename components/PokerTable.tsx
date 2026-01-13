@@ -64,7 +64,7 @@ export default function PokerTable({ users, isRevealed, currentUser, currentStor
             {allVoted && !isRevealed && onReveal ? (
               <button
                 onClick={onReveal}
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-3 px-6 rounded-lg shadow-xl transform hover:scale-105 transition-all text-sm"
+                className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white font-bold py-3 px-6 rounded-lg shadow-xl transform hover:scale-105 transition-all text-sm"
               >
                 🎴 Reveal Cards
               </button>
@@ -102,35 +102,36 @@ export default function PokerTable({ users, isRevealed, currentUser, currentStor
               `}>
                 {/* Card Symbol - More realistic playing card */}
                 <div className={`
-                  w-16 h-24 rounded-lg border-2 shadow-2xl relative overflow-hidden
+                  w-12 rounded-lg border-2 shadow-2xl relative overflow-hidden
                   ${isCurrentUser 
-                    ? 'bg-gradient-to-br from-white to-slate-50 border-indigo-400 ring-4 ring-indigo-300' 
+                    ? 'bg-gradient-to-br from-white to-slate-50 border-teal-400 ring-4 ring-teal-300' 
                     : 'bg-gradient-to-br from-white to-slate-100 border-slate-400'
                   }
-                `}>
+                `}
+                style={{ height: '4.5rem' }}>
                   {/* Card corner decoration */}
-                  <div className="absolute top-1 left-1 text-indigo-600 font-bold text-lg">
+                  <div className="absolute top-1 left-1 text-teal-600 font-bold text-xs">
                     {user.name.charAt(0).toUpperCase()}
                   </div>
-                  <div className="absolute bottom-1 right-1 text-indigo-600 font-bold text-lg rotate-180">
+                  <div className="absolute bottom-1 right-1 text-teal-600 font-bold text-xs rotate-180">
                     {user.name.charAt(0).toUpperCase()}
                   </div>
                   {/* Card center symbol */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-4xl">🃏</span>
+                    <span className="text-2xl">🃏</span>
                   </div>
                   {/* Card suit pattern */}
                   <div className="absolute inset-0 opacity-10">
-                    <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 text-indigo-600 text-2xl">♠</div>
-                    <div className="absolute bottom-1/4 left-1/2 transform -translate-x-1/2 text-indigo-600 text-2xl">♠</div>
+                    <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 text-teal-600 text-lg">♠</div>
+                    <div className="absolute bottom-1/4 left-1/2 transform -translate-x-1/2 text-teal-600 text-lg">♠</div>
                   </div>
                 </div>
                 
                 {/* Name Label - Larger */}
-                <div className="mt-3 whitespace-nowrap">
+                <div className="mt-2 whitespace-nowrap">
                   <div className={`
-                    px-4 py-2 rounded-lg text-base font-bold text-white shadow-lg
-                    ${isCurrentUser ? 'bg-gradient-to-r from-indigo-600 to-purple-600' : 'bg-gradient-to-r from-slate-700 to-slate-800'}
+                    px-3 py-1.5 rounded-lg text-sm font-bold text-white shadow-lg
+                    ${isCurrentUser ? 'bg-gradient-to-r from-teal-600 to-cyan-600' : 'bg-gradient-to-r from-slate-700 to-slate-800'}
                   `}>
                     {user.name}
                     {isCurrentUser && <span className="ml-1 text-sm">(You)</span>}
@@ -142,25 +143,26 @@ export default function PokerTable({ users, isRevealed, currentUser, currentStor
                   <div className={`absolute left-1/2 transform -translate-x-1/2 ${isRevealed ? '-top-16' : '-top-12'} z-20`}>
                     {isRevealed ? (
                       <div className={`
-                        bg-gradient-to-br from-indigo-500/90 via-purple-500/90 to-indigo-600/90 
-                        w-20 h-28 rounded-lg border-2 flex items-center justify-center 
+                        bg-gradient-to-br from-teal-500/90 via-cyan-500/90 to-teal-600/90 
+                        w-14 rounded-lg border-2 flex items-center justify-center 
                         shadow-xl transform transition-all duration-500
                         ${isCurrentUser 
-                          ? 'border-indigo-300 ring-2 ring-indigo-400/50 ring-opacity-50 scale-110' 
-                          : 'border-indigo-400/60 ring-1 ring-indigo-300/30 ring-opacity-30 scale-100'
+                          ? 'border-teal-300 ring-2 ring-teal-400/50 ring-opacity-50 scale-105' 
+                          : 'border-teal-400/60 ring-1 ring-teal-300/30 ring-opacity-30 scale-100'
                         }
-                      `}>
+                      `}
+                      style={{ height: '5.5rem' }}>
                         <div className="text-center">
-                          <span className="text-5xl font-black text-white drop-shadow-lg">
+                          <span className="text-4xl font-black text-white drop-shadow-lg">
                             {user.vote !== null ? user.vote : '?'}
                           </span>
-                          <div className="text-xs font-semibold text-indigo-100 mt-1 opacity-90">
+                          <div className="text-xs font-semibold text-teal-100 mt-0.5 opacity-90">
                             {user.name}
                           </div>
                         </div>
                       </div>
                     ) : (
-                      <div className="bg-red-600 w-12 h-16 rounded border-2 border-red-800 flex items-center justify-center shadow-xl">
+                      <div className="bg-red-600 w-10 h-14 rounded border-2 border-red-800 flex items-center justify-center shadow-xl">
                         <span className="text-white text-xs font-bold">VOTED</span>
                       </div>
                     )}
